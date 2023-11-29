@@ -60,7 +60,7 @@ class MuZeroConfig:
 
 
         ### Game
-        self.observation_shape = (7, 7, 3)  # Dimensions of the game observation, must be 3D (channel, height, width). For a 1D array, please reshape it to (1, 1, length of array)
+        self.observation_shape = (19, 20, 32)  # Dimensions of the game observation, must be 3D (channel, height, width). For a 1D array, please reshape it to (1, 1, length of array)
         self.action_space = list(range(len(ACTIONS)))  # Fixed list of all possible actions. You should only edit the length
         self.players = list(range(1))  # List of players. You should only edit the length
         self.stacked_observations = 0  # Number of previous observations and previous actions to add to the current observation
@@ -190,7 +190,7 @@ class Game(AbstractGame):
             The new observation, the reward and a boolean if the game has ended.
         """
         observation, reward, done, _ = self.env.step(action)
-        return numpy.array(observation), reward, done
+        return numpy.array(self.env.state_to_image(observation)), reward, done
 
     def legal_actions(self):
         """
@@ -212,7 +212,7 @@ class Game(AbstractGame):
         Returns:
             Initial observation of the game.
         """
-        return numpy.array(self.env.reset())
+        return numpy.array(self.env.state_to_image(self.env.reset()))
 
     def close(self):
         """
