@@ -203,7 +203,7 @@ class Game(AbstractGame):
         Returns:
             An array of integers, subset of the action space.
         """
-        return list(range(3))
+        return list(range(len(ACTIONS)))
 
     def reset(self):
         """
@@ -238,16 +238,22 @@ class Game(AbstractGame):
             String representing the action.
         """
         actions = {
-            0: 'MOVE_RIGHTUP',
-            1: 'MOVE_DOWN',
-            2: 'MOVE_LEFT',
+            0: 'NO_OPERATION',
+            1: 'MOVE_LEFT',
+            2: 'MOVE_DOWN',
             3: 'MOVE_UP',
             4: 'MOVE_RIGHT',
-            5: 'MOVE_LEFTUP',
+            5: 'MOVE_RIGHTDOWN',
             6: 'MOVE_LEFTDOWN',
-            7: 'MOVE_RIGHTDOWN',
-            8: 'DOWNSTAIR',
-            9: 'SEARCH',
-            10: 'NO_OPERATION',
+            7: 'MOVE_RIGHTUP',
+            8: 'MOVE_LEFTUP',
+            9: 'DOWNSTAIR',
+            10: 'SEARCH',
+            
         }
+
+        ACTIONS = [
+            '.', 'h', 'j', 'k', 'l', 'n',
+            'b', 'u', 'y', '>', 's',
+        ]
         return f"{action_number}. {actions[action_number]}"
