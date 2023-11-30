@@ -32,21 +32,12 @@ ENV_CONFIG = {
     },
 }
 
-EXPAND = ImageSetting(status=StatusFlag.DUNGEON_LEVEL, includes_hist=True)
+EXPAND = ImageSetting(status=StatusFlag.DUNGEON_LEVEL, includes_hist=False)
 
-ACTIONS = {
-    'u',
-    'j',
-    'h',
-    'k',
-    'l',
-    'y',
-    'b',
-    'n',
-    '>',
-    's',  
-    '.', 
-}
+ACTIONS = [
+    '.', 'h', 'j', 'k', 'l', 'n',
+    'b', 'u', 'y', '>', 's',
+]
 
 
 class MuZeroConfig:
@@ -60,7 +51,7 @@ class MuZeroConfig:
 
 
         ### Game
-        self.observation_shape = (19, 20, 32)  # Dimensions of the game observation, must be 3D (channel, height, width). For a 1D array, please reshape it to (1, 1, length of array)
+        self.observation_shape = (18, 20, 32)  # Dimensions of the game observation, must be 3D (channel, height, width). For a 1D array, please reshape it to (1, 1, length of array)
         self.action_space = list(range(len(ACTIONS)))  # Fixed list of all possible actions. You should only edit the length
         self.players = list(range(1))  # List of players. You should only edit the length
         self.stacked_observations = 0  # Number of previous observations and previous actions to add to the current observation
@@ -175,7 +166,9 @@ class Game(AbstractGame):
     """
 
     def __init__(self, seed=None):
-        self.env = FirstFloorEnv(RogueEnv(config_dict=ENV_CONFIG, image_setting=EXPAND), 100)
+        self.env_config = ENV_CONFIG
+        self.max_steps = 500 # based on rogue_gym paper
+        self.env = FirstFloorEnv(RogueEnv(config_dict=self.env_config, image_setting=EXPAND, max_steps=self.max_steps), 100)
         if seed is not None:
             self.env.seed(seed)
 
@@ -249,11 +242,5 @@ class Game(AbstractGame):
             8: 'MOVE_LEFTUP',
             9: 'DOWNSTAIR',
             10: 'SEARCH',
-            
         }
-
-        ACTIONS = [
-            '.', 'h', 'j', 'k', 'l', 'n',
-            'b', 'u', 'y', '>', 's',
-        ]
         return f"{action_number}. {actions[action_number]}"
