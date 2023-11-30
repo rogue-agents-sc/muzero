@@ -2,10 +2,12 @@ import copy
 import importlib
 import json
 import math
+import datetime
 import pathlib
 import pickle
 import sys
 import time
+from pathlib import Path
 
 import nevergrad
 import numpy
@@ -56,6 +58,8 @@ class MuZero:
             if type(config) is dict:
                 for param, value in config.items():
                     if hasattr(self.config, param):
+                        if param == "results_path":
+                            value = pathlib.Path(value) / "results" / datetime.datetime.now().strftime("%Y-%m-%d--%H-%M-%S")  # Path to store the model weights and TensorBoard logs
                         setattr(self.config, param, value)
                     else:
                         raise AttributeError(
@@ -137,7 +141,7 @@ class MuZero:
             log_in_tensorboard (bool): Start a testing worker and log its performance in TensorBoard.
         """
         if log_in_tensorboard or self.config.save_model:
-            self.config.results_path.mkdir(parents=True, exist_ok=True)
+            Path(self.config.results_path).mkdir(parents=True, exist_ok=True)
 
         # Manage GPUs
         if 0 < self.num_gpus:
@@ -566,7 +570,7 @@ def hyperparameter_search(
     print(recommendation.value)
     if best_training:
         # Save best training weights (but it's not the recommended weights)
-        best_training["config"].results_path.mkdir(parents=True, exist_ok=True)
+        Path(best_training["config"].results_path).mkdir(parents=True, exist_ok=True)
         torch.save(
             best_training["checkpoint"],
             best_training["config"].results_path / "model.checkpoint",
